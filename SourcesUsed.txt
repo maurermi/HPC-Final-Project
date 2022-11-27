@@ -1,0 +1,6 @@
+Here are some sources we used to help generate the code used in this project:
+
+https://medium.com/swlh/the-mathematics-of-bitcoin-74ebf6cefbb0#:~:text=For%20SHA%2D256%20these%20are,down%20to%20the%20nearest%20integer.
+https://www.youtube.com/watch?v=r1xBsG9zv6k
+https://github.com/MattyAB/BitcoinMiner/blob/main/sha256.cpp 
+
