@@ -16,7 +16,7 @@ bool checkVal(uint8_t* hash) {
 	uint32_t diff = DIFFICULTY;
 	uint8_t * d = static_cast<uint8_t*>(static_cast<void*>(&diff));
 
-	for(int i = 0; i < 32; i++) {
+	for(int i = 0; i < 8; i++) {
 		if(*(d+i) > *(hash + i)) {
 			return true;
 		}
