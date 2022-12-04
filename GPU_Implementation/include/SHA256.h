@@ -1,8 +1,9 @@
 #ifndef SHA256_H
 #define SHA256_H
-
-//#include <string>
-//#include <array>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string>
+#include <array>
 
 class SHA256 {
 
