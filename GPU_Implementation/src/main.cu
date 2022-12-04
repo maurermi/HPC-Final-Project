@@ -35,7 +35,7 @@ bool checkVal(uint8_t* hash) {
 }
 
 __global__ void compute_hash(uint32_t start_value, uint8_t** hashes) {
-	int i = threadIdx.x + blockIdx.x * blockDim.x ;
+	int i = threadIdx.x + blockIdx.x * blockDim.x;
 
 	SHA256 sha;
 	sha.update(reinterpret_cast<char*>(start_value + i));
@@ -48,6 +48,7 @@ int main(int argc, char ** argv) {
 	uint8_t * digest;
 	bool solved = false;
 	int start_num = 0;
+	uint64_t val[1];
 	uint8_t **hashes; cudaMallocManaged(&hashes, NUMTHREAD*sizeof(*uint8_t));
 	start = CLOCK();
 	// continue until hash is found
@@ -56,6 +57,7 @@ int main(int argc, char ** argv) {
 		for (int i = start_num; i < NUMTHREAD; i++) {
 			digest = hashes[i];
 			if (checkVal(digest)) {
+				*val = i;
 				break;
 			}
 		}
@@ -64,9 +66,11 @@ int main(int argc, char ** argv) {
 	finish = CLOCK();
 
 	printf("Block solved in %f ms\n", finish-start);
-	printf("%d attempts\n", (*val) - 1);
+	//printf("%d attempts\n", (*val) - 1);
 	printf("%s\n", SHA256::toString(digest).c_str());
 
-	delete[] digest;
+	//delete[] digest;
+	cudaFree(hashes);
+	
 	return EXIT_SUCCESS;
 }

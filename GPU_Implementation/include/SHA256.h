@@ -14,12 +14,12 @@
 class SHA256 {
 
 public:
-	SHA256();
+	CUDA_CALLABLE_MEMBER SHA256();
 	CUDA_CALLABLE_MEMBER void update(const uint8_t * data, size_t length);
 	CUDA_CALLABLE_MEMBER void update(const std::string &data);
 	CUDA_CALLABLE_MEMBER uint8_t * digest();
 
-	static std::string toString(const uint8_t * digest);
+	CUDA_CALLABLE_MEMBER static std::string toString(const uint8_t * digest);
 
 private:
 	uint8_t  m_data[64];
