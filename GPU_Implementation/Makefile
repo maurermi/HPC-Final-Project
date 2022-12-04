@@ -10,4 +10,4 @@ targ: $(SOURCES)
 	$(CC) $(CFLAGS) $(SOURCES) -I $(INC) -o $(EXE)
 
 clean:
-	m $(EXE)
+	rm $(EXE)
