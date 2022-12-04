@@ -5,12 +5,13 @@
 #include "SHA256.h"
 
 #define DIFFICULTY 0xff000000
+#define NUMTHREAD 1024
 
 // time program
 double CLOCK() {
-    struct timespec t;
-    clock_gettime(CLOCK_MONOTONIC, &t);
-    return (t.tv_sec * 1000)+(t.tv_nsec*1e-6);
+	struct timespec t;
+	clock_gettime(CLOCK_MONOTONIC, &t);
+	return (t.tv_sec * 1000)+(t.tv_nsec*1e-6);
 }
 
 // determine if the hash is < difficulty
@@ -33,34 +34,39 @@ bool checkVal(uint8_t* hash) {
 	return false;
 }
 
-int main(int argc, char ** argv) {
+__global__ void compute_hash(uint32_t start_value, uint8_t** hashes) {
+	int i = threadIdx.x + blockIdx.x * blockDim.x ;
+
 	SHA256 sha;
+	sha.update(reinterpret_cast<char*>(start_value + i));
+	hashes[i] = sha.digest();
+}
 
+int main(int argc, char ** argv) {
+
+	double start, finish;
 	uint8_t * digest;
-	uint32_t val[1];
-
-  double start, finish;
 	bool solved = false;
-  uint32_t result[8];
-  *val = 1;
+	int start_num = 0;
+	uint8_t **hashes; cudaMallocManaged(&hashes, NUMTHREAD*sizeof(*uint8_t));
 	start = CLOCK();
 	// continue until hash is found
-	// try with openacc
-	#pragma acc kernels 
-	{
-		while(!solved) {
-			sha.update(reinterpret_cast<char*>(val));
-			digest = sha.digest();
-			solved = checkVal(digest);
-			(*val)++;
+	do {
+		compute_hash<<<1, NUMTHREAD>>>(0, hashes);
+		for (int i = start_num; i < NUMTHREAD; i++) {
+			digest = hashes[i];
+			if (checkVal(digest)) {
+				break;
+			}
 		}
-	}
+		start_num += NUMTHREAD;
+	} while(!solved);
 	finish = CLOCK();
 
-  printf("Block solved in %f ms\n", finish-start);
+	printf("Block solved in %f ms\n", finish-start);
 	printf("%d attempts\n", (*val) - 1);
-	printf("%s\n", SHA256::toString(digest));
-	
+	printf("%s\n", SHA256::toString(digest).c_str());
+
 	delete[] digest;
 	return EXIT_SUCCESS;
 }
