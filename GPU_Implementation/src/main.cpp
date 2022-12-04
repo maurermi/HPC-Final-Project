@@ -4,7 +4,14 @@
 #include <string>
 #include "SHA256.h"
 
+<<<<<<< HEAD:GPU_Implementation/src/main.cpp
 #define DIFFICULTY 0xffffffffff000000 // Little Endian
+||||||| 918b2ee:GPU_Implementation/src/main.cpp
+#define DIFFICULTY 0xff000000
+=======
+#define DIFFICULTY 0xff000000
+#define NUMTHREAD 1024
+>>>>>>> main:GPU_Implementation/src/main.cu
 
 // time program
 double CLOCK() {
@@ -33,19 +40,46 @@ bool checkVal(uint8_t* hash) {
 	return false;
 }
 
-int main(int argc, char ** argv) {
-	SHA256 sha;
+__global__ void compute_hash(uint32_t start_value, uint8_t** hashes) {
+	int i = threadIdx.x + blockIdx.x * blockDim.x;
 
+	SHA256 sha;
+	sha.update(reinterpret_cast<char*>(start_value + i));
+	hashes[i] = sha.digest();
+}
+
+<<<<<<< HEAD:GPU_Implementation/src/main.cpp
 	uint8_t * digest[1024];
 	uint32_t val[1];
 
 	double start, finish;
+||||||| 918b2ee:GPU_Implementation/src/main.cpp
+	uint8_t * digest;
+	uint32_t val[1];
+
+  double start, finish;
+=======
+int main(int argc, char ** argv) {
+
+	double start, finish;
+	uint8_t * digest;
+>>>>>>> main:GPU_Implementation/src/main.cu
 	bool solved = false;
+<<<<<<< HEAD:GPU_Implementation/src/main.cpp
 	uint32_t result[8];
 	int i;
 	*val = 1;
+||||||| 918b2ee:GPU_Implementation/src/main.cpp
+  uint32_t result[8];
+  *val = 1;
+=======
+	int start_num = 0;
+	uint64_t val[1];
+	uint8_t **hashes; cudaMallocManaged(&hashes, NUMTHREAD*sizeof(*uint8_t));
+>>>>>>> main:GPU_Implementation/src/main.cu
 	start = CLOCK();
 	// continue until hash is found
+<<<<<<< HEAD:GPU_Implementation/src/main.cpp
 	// try with openacc
 	while(!solved) {
 		#pragma acc parallel loop
@@ -61,14 +95,50 @@ int main(int argc, char ** argv) {
 			if (solved){
 				break;
 			}
+||||||| 918b2ee:GPU_Implementation/src/main.cpp
+	// try with openacc
+	#pragma acc kernels 
+	{
+		while(!solved) {
+			sha.update(reinterpret_cast<char*>(val));
+			digest = sha.digest();
+			solved = checkVal(digest);
+			(*val)++;
+=======
+	do {
+		compute_hash<<<1, NUMTHREAD>>>(0, hashes);
+		for (int i = start_num; i < NUMTHREAD; i++) {
+			digest = hashes[i];
+			if (checkVal(digest)) {
+				*val = i;
+				break;
+			}
+>>>>>>> main:GPU_Implementation/src/main.cu
 		}
-	}
+		start_num += NUMTHREAD;
+	} while(!solved);
 	finish = CLOCK();
 
+<<<<<<< HEAD:GPU_Implementation/src/main.cpp
 	printf("Block solved in %f ms\n", finish-start);
 	printf("%d attempts\n", (*val) - 1);
 	printf("%s\n", SHA256::toString(digest[i]).c_str());
 
 	//delete[] digest;
+||||||| 918b2ee:GPU_Implementation/src/main.cpp
+  printf("Block solved in %f ms\n", finish-start);
+	printf("%d attempts\n", (*val) - 1);
+	printf("%s\n", SHA256::toString(digest));
+	
+	delete[] digest;
+=======
+	printf("Block solved in %f ms\n", finish-start);
+	//printf("%d attempts\n", (*val) - 1);
+	printf("%s\n", SHA256::toString(digest).c_str());
+
+	//delete[] digest;
+	cudaFree(hashes);
+	
+>>>>>>> main:GPU_Implementation/src/main.cu
 	return EXIT_SUCCESS;
 }
