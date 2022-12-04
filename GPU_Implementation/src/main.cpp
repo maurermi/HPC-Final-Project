@@ -46,7 +46,8 @@ int main(int argc, char ** argv) {
 	start = CLOCK();
 	// continue until hash is found
 	// try with openacc
-	#pragma acc kernels {
+	#pragma acc kernels 
+	{
 		while(!solved) {
 			sha.update(reinterpret_cast<char*>(val));
 			digest = sha.digest();
