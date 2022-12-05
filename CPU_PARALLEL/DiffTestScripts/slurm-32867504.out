@@ -1,0 +1,10 @@
+Hello from thread 1
+Hello from thread 2
+Hello from thread 0
+num threads 4
+Hello from thread 3
+CPU_PARALLEL 6327 attempts
+000c9e6ea121936fe20b54876f0514f63d1bcc8242bd9818385d2d988a3055d5
+CPU_PARALLEL 6330 attempts
+000c9e6ea121936fe20b54876f0514f63d1bcc8242bd9818385d2d988a3055d5
+CPU_PARALLEL Block difficulty 3 solved in 7.222652 ms

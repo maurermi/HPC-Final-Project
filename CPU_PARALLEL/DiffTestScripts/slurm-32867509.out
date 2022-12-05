@@ -1,0 +1,1 @@
+/var/spool/slurmd/job32867509/slurm_script: line 10: 42681 Killed                  $SRUN ../hashing 8

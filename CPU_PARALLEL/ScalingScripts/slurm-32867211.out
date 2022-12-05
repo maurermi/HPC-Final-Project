@@ -1,0 +1,20 @@
+Hello from thread 11
+Hello from thread 3
+Hello from thread 12
+Hello from thread 13
+Hello from thread 0
+num threads 16
+Hello from thread 5
+Hello from thread 6
+Hello from thread 2
+Hello from thread 7
+Hello from thread 1
+Hello from thread 8
+Hello from thread 9
+Hello from thread 15
+Hello from thread 10
+Hello from thread 14
+Hello from thread 4
+CPU_PARALLEL 521318127 attempts
+00000094f3ed54941755f56fb8f410c6f923f22ee8bd84ae71269815862ec6b4
+CPU_PARALLEL Block difficulty 6 solved in 36505.712663 ms

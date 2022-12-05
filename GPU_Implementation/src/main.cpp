@@ -5,7 +5,9 @@
 #include "SHA256.h"
 
 #define DIFFICULTY 0xffffffffff000000 // Little Endian
-#define NUMTHREAD 1024
+#define NUMTHREAD 10000
+
+
 
 // time program
 double CLOCK() {

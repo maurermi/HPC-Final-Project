@@ -4,8 +4,10 @@
 #include <string>
 #include "SHA256.h"
 
-#define DIFFICULTY 0xff000000
+#define DIFFICULTY 0xffffffffff000000
 
+uint64_t diff = DIFFICULTY;
+int diff_val = 6;
 // time program
 double CLOCK() {
     struct timespec t;
@@ -15,7 +17,7 @@ double CLOCK() {
 
 // determine if the hash is < difficulty
 bool checkVal(uint8_t* hash) {
-	uint32_t diff = DIFFICULTY;
+	//diff = DIFFICULTY;
 	// cast difficulty to be a string of uint8_t's like the SHA256 library does
 	uint8_t * d = static_cast<uint8_t*>(static_cast<void*>(&diff));
 
@@ -36,6 +38,42 @@ bool checkVal(uint8_t* hash) {
 int main(int argc, char ** argv) {
 	SHA256 sha;
 
+	if(argc > 1) {
+		int difficulty = atoi(argv[1]);
+		switch(difficulty) {
+			case 2: 
+				diff = 0xffffffffffffff00;
+				diff_val = 2;
+				break;
+			case 3:
+				diff = 0xffffffffffff0f00;
+				diff_val = 3;
+				break;
+			case 4: 
+				diff = 0xffffffffffff0000;
+				diff_val = 4;
+				break;
+			case 5: 
+				diff = 0xffffffffff0f0000;
+				diff_val = 5;
+				break;
+			case 6:
+				diff = 0xffffffffff000000;
+				diff_val = 6;
+				break;
+			case 7: 
+				diff = 0xffffffff0f000000;
+				diff_val = 7;
+				break;
+			case 8:
+				diff = 0xffffffff00000000;
+				diff_val = 8;
+				break;
+			default:
+				diff = 0xffffffffff000000;
+		}
+	}
+
 	uint8_t * digest;
 	uint32_t val[1];
 
@@ -55,8 +93,8 @@ int main(int argc, char ** argv) {
 
   printf("Block solved in %f ms\n", finish-start);
 	printf("%d attempts\n", (*val) - 1);
+	printf("Difficulty: %d\n", diff_val);
 	std::cout << SHA256::toString(digest) << std::endl;
 	
-	delete[] digest;
-	return EXIT_SUCCESS;
+	return 0;
 }

@@ -32,6 +32,7 @@ omp_lock_t done_lock;
 
 // Store the difficulty in a 64 bit number
 uint64_t diff = DIFFICULTY;
+int diff_val = 6;
 // cast to an array of bytes for comparison
 uint8_t * d;
 // for timing code
@@ -66,8 +67,44 @@ bool checkVal(uint8_t* hash) {
 }
 
 int main(int argc, char ** argv) {
-  SHA256 sha; // object for calling SHA functions
-  int nZeroes = DIFF_VAL; // For printing
+	SHA256 sha; // object for calling SHA functions
+	if(argc > 1) {
+		int difficulty = atoi(argv[1]);
+		switch(difficulty) {
+			case 2: 
+				diff = 0xffffffffffffff00;
+				diff_val = 2;
+				break;
+			case 3:
+				diff = 0xffffffffffff0f00;
+				diff_val = 3;
+				break;
+			case 4: 
+				diff = 0xffffffffffff0000;
+				diff_val = 4;
+				break;
+			case 5: 
+				diff = 0xffffffffff0f0000;
+				diff_val = 5;
+				break;
+			case 6:
+				diff = 0xffffffffff000000;
+				diff_val = 6;
+				break;
+			case 7: 
+				diff = 0xffffffff0f000000;
+				diff_val = 7;
+				break;
+			case 8:
+				diff = 0xffffffff00000000;
+				diff_val = 8;
+				break;
+			default:
+				diff = 0xffffffffff000000;
+		}
+	}
+  
+	//int nZeroes = DIFF_VAL; // For printing
   uint8_t * digest; // stores the output of a SHA256 hash operation
 	//uint32_t val[1]; // where to start hashing (needs to be castable to an int)
   uint64_t val[1]; // where to start hashing (needs to be castable to an int)
@@ -89,7 +126,7 @@ int main(int argc, char ** argv) {
   int nthreads; // for debug info
   bool test; // store reult of checkVal
 	// start parallelized loop
-  #pragma omp parallel private(val, sha)
+  #pragma omp parallel private(val, sha, digest) //num_threads(8)
   {
 		// start point based on threadid
     *val = omp_get_thread_num();
@@ -106,11 +143,14 @@ int main(int argc, char ** argv) {
 			// is the value less than the difficulty
       test = checkVal(digest);
 			// yes, done.
-      if(test && !solved) {
+      if(test) { // && !solved) {
         omp_set_lock(&done_lock);
         solved = true;
         printf("CPU_PARALLEL %d attempts\n", (*val) - 1);
-        omp_unset_lock(&done_lock);
+  	 		
+	  		std::cout << SHA256::toString(digest) << std::endl;
+				//printf("Hash: %s\n", SHA256::toString(digest));
+	  	  omp_unset_lock(&done_lock);
       }
 			/*
       if(solved) {
@@ -123,8 +163,8 @@ int main(int argc, char ** argv) {
   }
   finish = CLOCK();
 
-  printf("CPU_PARALLEL Block difficulty %d solved in %f ms\n", nZeroes, finish-start);
-  std::cout << SHA256::toString(digest) << std::endl;
+  printf("CPU_PARALLEL Block difficulty %d solved in %f ms\n", diff_val, finish-start);
+  //std::cout << SHA256::toString(digest) << std::endl;
 
   return 0;
 }
