@@ -35,6 +35,7 @@ uint64_t diff = DIFFICULTY;
 int diff_val = 6;
 // cast to an array of bytes for comparison
 uint8_t * d;
+long v1;
 // for timing code
 double CLOCK() {
     struct timespec t;
@@ -121,12 +122,17 @@ int main(int argc, char ** argv) {
 	
 	uint32_t result[8];
   // start hashing at 1
-	*val = 1;
+	if(argc > 2) {
+		*val = atoi(argv[2]);	
+	}
+	else {
+		*val = 1;
+	}
   start = CLOCK();
   int nthreads; // for debug info
   bool test; // store reult of checkVal
 	// start parallelized loop
-  #pragma omp parallel private(val, sha, digest) //num_threads(8)
+  #pragma omp parallel private(val, sha, digest) num_threads(4)
   {
 		// start point based on threadid
     *val = omp_get_thread_num();

@@ -8,6 +8,7 @@
 
 uint64_t diff = DIFFICULTY;
 int diff_val = 6;
+long v1;
 // time program
 double CLOCK() {
     struct timespec t;
@@ -37,7 +38,6 @@ bool checkVal(uint8_t* hash) {
 
 int main(int argc, char ** argv) {
 	SHA256 sha;
-
 	if(argc > 1) {
 		int difficulty = atoi(argv[1]);
 		switch(difficulty) {
@@ -73,14 +73,18 @@ int main(int argc, char ** argv) {
 				diff = 0xffffffffff000000;
 		}
 	}
-
 	uint8_t * digest;
 	uint32_t val[1];
 
+	if(argc > 2) {
+		*val = atoi(argv[2]);	
+	}
+	else {
+		*val = 1;
+	}
   double start, finish;
 	bool solved = false;
   uint32_t result[8];
-  *val = 1;
 	start = CLOCK();
 	// continue until hash is found
 	while(!solved) {
