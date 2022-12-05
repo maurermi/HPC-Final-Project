@@ -1,5 +1,8 @@
 # HPC-Final-Project
 
+This project explores finding a Hashcash hash on different 
+architectures and using different software implementations.
+
 Makefiles are provided in each sub-directory for generating the associated
 executable code. 
 
