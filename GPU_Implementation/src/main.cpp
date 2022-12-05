@@ -7,6 +7,9 @@
 #define DIFFICULTY 0xffffffffff000000 // Little Endian
 #define NUMTHREAD 10000
 
+// Store the difficulty in a 64 bit number
+uint64_t diff = DIFFICULTY;
+int diff_val = 6;
 
 
 // time program
@@ -18,7 +21,6 @@ double CLOCK() {
 
 // determine if the hash is < difficulty
 bool checkVal(uint8_t* hash) {
-	uint64_t diff = DIFFICULTY;
 	// cast difficulty to be a string of uint8_t's like the SHA256 library does
 	uint8_t * d = static_cast<uint8_t*>(static_cast<void*>(&diff));
 
@@ -38,7 +40,41 @@ bool checkVal(uint8_t* hash) {
 
 int main(int argc, char ** argv) {
 	SHA256 sha;
-
+	if(argc > 1) {
+		int difficulty = atoi(argv[1]);
+		switch(difficulty) {
+			case 2: 
+				diff = 0xffffffffffffff00;
+				diff_val = 2;
+				break;
+			case 3:
+				diff = 0xffffffffffff0f00;
+				diff_val = 3;
+				break;
+			case 4: 
+				diff = 0xffffffffffff0000;
+				diff_val = 4;
+				break;
+			case 5: 
+				diff = 0xffffffffff0f0000;
+				diff_val = 5;
+				break;
+			case 6:
+				diff = 0xffffffffff000000;
+				diff_val = 6;
+				break;
+			case 7: 
+				diff = 0xffffffff0f000000;
+				diff_val = 7;
+				break;
+			case 8:
+				diff = 0xffffffff00000000;
+				diff_val = 8;
+				break;
+			default:
+				diff = 0xffffffffff000000;
+		}
+	}
 	double start, finish;
 	uint8_t * digest[NUMTHREAD];
 	bool solved = false;
@@ -67,10 +103,9 @@ int main(int argc, char ** argv) {
 	} while(!solved);
 	finish = CLOCK();
 
-	printf("Block solved in %f ms\n", finish-start);
+	printf("Block difficulty %d solved in %f ms\n", diff_val, finish-start);
 	printf("%ld attempts\n", (*val) - 1);
 	printf("%s\n", SHA256::toString(digest[i]).c_str());
 
-	//delete[] digest;
-	return EXIT_SUCCESS;
+	return 0;
 }
