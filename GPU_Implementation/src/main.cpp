@@ -81,6 +81,13 @@ int main(int argc, char ** argv) {
 	int i;
 	int start_num = 1;
 	uint64_t val[1];
+  if(argc > 2) {
+    *val = std::stoi(argv[2]);
+ 		start_num = *val;
+  }
+  else {
+    *val = 1;
+  }
 	start = CLOCK();
 	// continue until hash is found
 	// try with openacc

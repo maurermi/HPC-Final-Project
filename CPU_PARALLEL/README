@@ -1,0 +1,10 @@
+This is an OpenMP implementation of a hashcash hash finder.
+Compilation can be done using the provided Makefile,
+and sample batch scripts for testing can be found in 
+the DiffTestScripts folder.
+
+Note: The test scripts in DiffTestScripts need 
+a second input value to initalize the counter 
+
+To run, use the following line:
+./hashing <difficulty = 6> <start point = 1>

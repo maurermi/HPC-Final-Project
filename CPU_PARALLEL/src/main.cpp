@@ -9,7 +9,7 @@
  * https://github.com/System-Glitch/SHA256
  */
 
-
+// required libraries
 #include <iostream>
 #include <chrono>
 #include <ctime>
@@ -69,6 +69,7 @@ bool checkVal(uint8_t* hash) {
 
 int main(int argc, char ** argv) {
 	SHA256 sha; // object for calling SHA functions
+	// allow user to input difficulty from CLI
 	if(argc > 1) {
 		int difficulty = atoi(argv[1]);
 		switch(difficulty) {
@@ -101,13 +102,14 @@ int main(int argc, char ** argv) {
 				diff_val = 8;
 				break;
 			default:
+				// only allow difficulties 2-8
+				// difficulty < 2 is trivial
+				// difficulty > 8 cannot be run on Discovery
 				diff = 0xffffffffff000000;
 		}
 	}
   
-	//int nZeroes = DIFF_VAL; // For printing
   uint8_t * digest; // stores the output of a SHA256 hash operation
-	//uint32_t val[1]; // where to start hashing (needs to be castable to an int)
   uint64_t val[1]; // where to start hashing (needs to be castable to an int)
 
 	// this will remain a constant throughout program execution
@@ -119,28 +121,28 @@ int main(int argc, char ** argv) {
 	// for timing
   double start, finish;
   
-	
-	uint32_t result[8];
   // start hashing at 1
 	if(argc > 2) {
-		*val = atoi(argv[2]);	
+		v1 = atoi(argv[2]);	
 	}
 	else {
-		*val = 1;
+		v1 = 1;
 	}
   start = CLOCK();
   int nthreads; // for debug info
   bool test; // store reult of checkVal
 	// start parallelized loop
-  #pragma omp parallel private(val, sha, digest) num_threads(4)
+  #pragma omp parallel private(val, sha, digest) num_threads(8)
   {
 		// start point based on threadid
-    *val = omp_get_thread_num();
+    (*val) = v1;
+		(*val) += omp_get_thread_num();
+		int tnum = omp_get_thread_num();
     nthreads = omp_get_num_threads();
-    printf("Hello from thread %d\n", omp_get_thread_num());
-		if(*val == 0) {
+		if(tnum == 0) {
       printf("num threads %d\n", nthreads);
-    }
+   		printf("val %ld\n", *val);
+	  }
     while(!solved) {
 			// sha requires string of chars
       sha.update(reinterpret_cast<char*>(val));
@@ -149,28 +151,21 @@ int main(int argc, char ** argv) {
 			// is the value less than the difficulty
       test = checkVal(digest);
 			// yes, done.
-      if(test) { // && !solved) {
+      if(test) {
         omp_set_lock(&done_lock);
         solved = true;
         printf("CPU_PARALLEL %d attempts\n", (*val) - 1);
-  	 		
+  	 		// hash is found, print to stdout	
+  			finish = CLOCK();
 	  		std::cout << SHA256::toString(digest) << std::endl;
-				//printf("Hash: %s\n", SHA256::toString(digest));
 	  	  omp_unset_lock(&done_lock);
       }
-			/*
-      if(solved) {
-        printf("CPU_PARALLEL %d attempts\n", (*val) - 1);
-      }
-			*/
+			// else, increment and continue
       (*val)+=nthreads;
-      //solved = true;
     }
   }
-  finish = CLOCK();
 
   printf("CPU_PARALLEL Block difficulty %d solved in %f ms\n", diff_val, finish-start);
-  //std::cout << SHA256::toString(digest) << std::endl;
 
   return 0;
 }
