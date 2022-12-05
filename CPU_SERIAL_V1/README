@@ -1,0 +1,10 @@
+This is a serial implementation of a Hashcash hash finder. 
+This implementation tries values one by one until a valid hash is found.
+Compilation can be done using the provided makefile, and 
+sample test scripts can be found in DiffTestScripts
+
+Note: The test scripts in DiffTestScripts need 
+a second input value to initalize the counter 
+
+To run, use the following line:
+./hashing <difficulty = 6> <start point = 1>

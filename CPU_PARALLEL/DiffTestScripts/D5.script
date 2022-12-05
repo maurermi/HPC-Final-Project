@@ -7,4 +7,4 @@
 #SBATCH --job-name=Michael
 #SBATCH --mem=100G
 #SBATCH --partition=express
-$SRUN ../hashing 5
+$SRUN ../hashing 5 10000000

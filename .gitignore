@@ -1,1 +1,6 @@
 GPU_Implementation/hashing
+CPU_SERIAL_V1/hashing
+CPU_PARALLEL/hashing
+CPU_PARALLEL/ScalingScripts/
+*.out
+*.o

@@ -1,8 +1,0 @@
-Hello from thread 0
-num threads 4
-Hello from thread 3
-Hello from thread 2
-Hello from thread 1
-CPU_PARALLEL 2363 attempts
-00864f868bea57293408306ed4c09bb5661f9ec8bcab2c6eb084956e232acb19
-CPU_PARALLEL Block difficulty 2 solved in 1.393585 ms

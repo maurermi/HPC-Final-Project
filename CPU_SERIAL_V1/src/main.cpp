@@ -6,9 +6,10 @@
 
 #define DIFFICULTY 0xffffffffff000000
 
+// global storage of difficulty
 uint64_t diff = DIFFICULTY;
+// for printing 
 int diff_val = 6;
-long v1;
 // time program
 double CLOCK() {
     struct timespec t;
@@ -37,7 +38,9 @@ bool checkVal(uint8_t* hash) {
 }
 
 int main(int argc, char ** argv) {
+	// create sha object to enable use of SHA256 calls
 	SHA256 sha;
+	// read in difficulty from user
 	if(argc > 1) {
 		int difficulty = atoi(argv[1]);
 		switch(difficulty) {
@@ -70,34 +73,44 @@ int main(int argc, char ** argv) {
 				diff_val = 8;
 				break;
 			default:
+				// difficulty can only be 2 < diff < 8
+				// other values are either trivial, 
+				// or take too long on discovery to complete
 				diff = 0xffffffffff000000;
 		}
 	}
+	// storage of SHA information
 	uint8_t * digest;
-	uint32_t val[1];
+	// counter start point
+	uint64_t val[1];
 
+	// read in counter start from CLI
 	if(argc > 2) {
 		*val = atoi(argv[2]);	
 	}
 	else {
-		*val = 1;
+		*val = 1; // default to 1 if none given
 	}
+	// store timing info
   double start, finish;
+	// is this computation finished?
 	bool solved = false;
-  uint32_t result[8];
+	
 	start = CLOCK();
 	// continue until hash is found
 	while(!solved) {
 		sha.update(reinterpret_cast<char*>(val));
 		digest = sha.digest();
 		solved = checkVal(digest);
-		(*val)++;
+		(*val)++; // if this hash is invalid, increment and try again
 	}
 	finish = CLOCK();
 
+	// print output to user
   printf("Block solved in %f ms\n", finish-start);
 	printf("%d attempts\n", (*val) - 1);
 	printf("Difficulty: %d\n", diff_val);
+	// print found hash
 	std::cout << SHA256::toString(digest) << std::endl;
 	
 	return 0;

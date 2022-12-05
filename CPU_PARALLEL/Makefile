@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-fopenmp -std=c++17 -Wall -O2
+CFLAGS=-fopenmp -std=c++17 -Wall #-O2
 SOURCES=src/SHA256.cpp src/main.cpp
 EXE=hashing
 INC=include/
