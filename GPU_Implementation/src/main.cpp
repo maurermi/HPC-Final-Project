@@ -42,6 +42,7 @@ int main(int argc, char ** argv) {
 	SHA256 sha;
 	if(argc > 1) {
 		int difficulty = atoi(argv[1]);
+		// Switch case for difficulty of finding the hash
 		switch(difficulty) {
 			case 2: 
 				diff = 0xffffffffffffff00;
@@ -85,6 +86,7 @@ int main(int argc, char ** argv) {
 	// continue until hash is found
 	// try with openacc
 	while(!solved) {
+		// Generate hashes in parallel here
 		#pragma acc parallel loop
 		for (i = 0; i < NUMTHREAD; i++) {
 			uint32_t this_val[1];
@@ -93,6 +95,7 @@ int main(int argc, char ** argv) {
 			digest[i] = sha.digest();
 		}
 		(*val) += NUMTHREAD;
+		// Check if one of the GPU hashes is solved
 		for (i = 0; i < NUMTHREAD; i++) { 
 			solved = checkVal(digest[i]);
 			if (solved){
