@@ -5,7 +5,7 @@
 #include "SHA256.h"
 
 #define DIFFICULTY 0xffffffffff000000 // Little Endian
-#define NUMTHREAD 10000
+#define NUMTHREAD 1024
 
 // Store the difficulty in a 64 bit number
 uint64_t diff = DIFFICULTY;
